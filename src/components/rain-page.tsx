@@ -1,6 +1,6 @@
 import { useEffect, useId, useState } from "react";
 import { useNavigate, useRouter } from "@tanstack/react-router";
-import { LocateFixed, RefreshCw, Search } from "lucide-react";
+import { LocateFixed, RefreshCw, Search, TriangleAlert, X } from "lucide-react";
 import { HindcastChart, OutlookChart } from "@/components/rain-charts";
 import { formatCoord, formatMm, scoreLabel } from "@/lib/rain-score";
 import { SOURCES, type RainReport, type SourceId } from "@/lib/rain-types";
@@ -40,6 +40,7 @@ export function RainPage({ report, place }: { report: RainReport; place: Place }
   const [open, setOpen] = useState(false);
   const [geoNote, setGeoNote] = useState("");
   const [recent, setRecent] = useState<Array<{ q: string; lat: number; lon: number }>>([]);
+  const [warnOpen, setWarnOpen] = useState(false);
 
   const title = place.q || "Mansfield, Victoria";
   const totals = report.sources.map((source) => source.total48Mm).filter((value): value is number => value != null);
@@ -70,6 +71,19 @@ export function RainPage({ report, place }: { report: RainReport; place: Place }
       }
     }
   }, [place.lat, place.lon, place.q]);
+
+  useEffect(() => {
+    setWarnOpen(false);
+  }, [place.lat, place.lon]);
+
+  useEffect(() => {
+    if (!warnOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setWarnOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [warnOpen]);
 
   useEffect(() => {
     const query = text.trim();
@@ -179,6 +193,22 @@ export function RainPage({ report, place }: { report: RainReport; place: Place }
           </p>
         </div>
         <div className="flex gap-2">
+          {report.warnings.length > 0 ? (
+            <button
+              type="button"
+              aria-expanded={warnOpen}
+              aria-controls="weather-warning"
+              onClick={() => setWarnOpen(true)}
+              className="inline-flex size-11 items-center justify-center rounded-full bg-[#d04828] text-white"
+            >
+              <TriangleAlert className="size-5" aria-hidden="true" />
+              <span className="sr-only">
+                {report.warnings.length === 1
+                  ? "Current weather warning"
+                  : `${report.warnings.length} current weather warnings`}
+              </span>
+            </button>
+          ) : null}
           <button type="button" onClick={useLocation} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-fg px-4 text-sm text-bg">
             <LocateFixed className="size-4" aria-hidden="true" />
             Use my location
@@ -193,6 +223,55 @@ export function RainPage({ report, place }: { report: RainReport; place: Place }
           </button>
         </div>
       </header>
+      {warnOpen && report.warnings.length > 0 ? (
+        <>
+          <button
+            type="button"
+            aria-label="Close warning"
+            className="fixed inset-0 z-20 cursor-default bg-[#1c2418]/30"
+            onClick={() => setWarnOpen(false)}
+          />
+          <section
+            id="weather-warning"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="weather-warning-title"
+            className="panel fixed inset-x-4 top-24 z-30 flex max-h-[min(32rem,70vh)] flex-col overflow-hidden md:inset-x-auto md:right-8 md:w-[28rem]"
+          >
+            <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
+              <h2 id="weather-warning-title" className="font-display text-xl text-fg">
+                Weather warning
+              </h2>
+              <button
+                type="button"
+                aria-label="Close warning"
+                onClick={() => setWarnOpen(false)}
+                className="inline-flex size-11 items-center justify-center rounded-full bg-bg text-fg"
+              >
+                <X className="size-4" aria-hidden="true" />
+              </button>
+            </div>
+            <div className="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain px-4 py-4">
+              {report.warnings.map((warning) => (
+                <article key={warning.id} className="space-y-2 text-sm text-fg">
+                  <h3 className="text-base font-medium">{warning.title}</h3>
+                  {warning.area ? <p className="text-muted">{warning.area}</p> : null}
+                  {warning.issued ? <p className="text-muted">{warning.issued}</p> : null}
+                  {warning.details ? <p className="whitespace-pre-wrap leading-relaxed">{warning.details}</p> : null}
+                  {warning.advice ? <p className="whitespace-pre-wrap leading-relaxed">{warning.advice}</p> : null}
+                </article>
+              ))}
+              <p className="text-sm text-muted">
+                Warning text from the Bureau of Meteorology. Check{" "}
+                <a className="font-medium text-fg underline" href="https://www.bom.gov.au/weather-and-climate/warnings-and-alerts">
+                  warnings and alerts
+                </a>{" "}
+                before you travel.
+              </p>
+            </div>
+          </section>
+        </>
+      ) : null}
 
       <div className="relative mt-5">
         <label className="field flex min-h-12 items-center gap-2 px-4" htmlFor="place-search">

@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { auStations } from "@/data/au-stations";
 import { gaugeHourly, localHourKey, median, parseTrace, round1, scoreRain, shiftHourKey, stampToLocal } from "@/lib/rain-score";
-import { SOURCES, type FutureHour, type GaugeInfo, type PastHour, type RainReport, type SourceId, type SourceScore } from "@/lib/rain-types";
+import { SOURCES, type FutureHour, type GaugeInfo, type PastHour, type RainReport, type SourceId, type SourceScore, type WeatherWarning } from "@/lib/rain-types";
 
 const USER_AGENT = "Rainline/1.0 (rainfall comparison; contact aora)";
 const GAUGE_RADIUS_KM = 90;
@@ -142,6 +142,69 @@ function seriesAt(block: HourlyBlock, key: string, indexes: number[]): Array<num
   return indexes.map((index) => values[index] ?? null);
 }
 
+function plainText(value: unknown): string {
+  if (typeof value !== "string") return "";
+  return value
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>/gi, "\n")
+    .replace(/<li>/gi, "\n• ")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&/g, "&")
+    .replace(/</g, "<")
+    .replace(/>/g, ">")
+    .replace(/&#39;|'/g, "'")
+    .replace(/"/g, '"')
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+async function fetchWarnings(lat: number, lon: number): Promise<WeatherWarning[]> {
+  const area = `${lon.toFixed(2)},${lat.toFixed(2)}`;
+  const list = (await readJson(
+    `https://api.bom.gov.au/apikey/v1/warnings/list?area_type=coordinate&area_code=${encodeURIComponent(area)}`,
+  )) as { warnings?: Array<{ id?: string }> };
+  const ids = (list.warnings ?? [])
+    .map((item) => item.id)
+    .filter((id): id is string => typeof id === "string" && /^[A-Z0-9]{4,16}$/.test(id))
+    .slice(0, 6);
+  const details = await Promise.all(
+    ids.map(async (id) => {
+      try {
+        const payload = (await readJson(`https://api.bom.gov.au/apikey/v1/warnings/warning/${id}`)) as {
+          warning?: {
+            title?: string;
+            sub_title?: string;
+            issued_at?: string;
+            advice?: string;
+            info?: Array<{ summary?: string }>;
+          };
+        };
+        const warning = payload.warning;
+        if (!warning) return null;
+        const title = plainText(warning.title);
+        if (!title || /^cancellation\b/i.test(title)) return null;
+        const detailsText = (warning.info ?? [])
+          .map((item) => plainText(item.summary))
+          .filter(Boolean)
+          .join("\n\n");
+        return {
+          id,
+          title,
+          area: plainText(warning.sub_title),
+          issued: plainText(warning.issued_at),
+          details: detailsText,
+          advice: plainText(warning.advice),
+        };
+      } catch {
+        return null;
+      }
+    }),
+  );
+  return details.filter((item): item is WeatherWarning => item != null);
+}
+
 export const compareRain = createServerFn({ method: "GET" })
   .validator((input: unknown) => {
     if (!input || typeof input !== "object") throw new Error("Missing location");
@@ -155,6 +218,7 @@ export const compareRain = createServerFn({ method: "GET" })
     return { latitude, longitude };
   })
   .handler(async ({ data }): Promise<RainReport> => {
+    const warningsPromise = fetchWarnings(data.latitude, data.longitude).catch(() => [] as WeatherWarning[]);
     const url = new URL("https://previous-runs-api.open-meteo.com/v1/forecast");
     url.searchParams.set("latitude", data.latitude.toFixed(4));
     url.searchParams.set("longitude", data.longitude.toFixed(4));
@@ -316,5 +380,6 @@ export const compareRain = createServerFn({ method: "GET" })
       reference,
       referenceNote,
       gauge: gauge?.info ?? null,
+      warnings: await warningsPromise,
     };
   });

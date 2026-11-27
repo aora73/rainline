@@ -72,6 +72,15 @@ export type GaugeInfo = {
   elevationM: number | null;
 };
 
+export type WeatherWarning = {
+  id: string;
+  title: string;
+  area: string;
+  issued: string;
+  details: string;
+  advice: string;
+};
+
 export type RainReport = {
   latitude: number;
   longitude: number;
@@ -84,4 +93,5 @@ export type RainReport = {
   reference: "gauge" | "consensus";
   referenceNote: string;
   gauge: GaugeInfo | null;
+  warnings: WeatherWarning[];
 };
