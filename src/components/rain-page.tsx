@@ -252,7 +252,10 @@ export function RainPage({ report, place }: { report: RainReport; place: Place }
       </p>
 
       <div className="mt-5">
-        <OutlookChart hours={report.future} />
+        <OutlookChart
+          hours={report.future}
+          scores={report.sources.map((source) => ({ id: source.id, score: source.score }))}
+        />
       </div>
 
       <section className="mt-6">

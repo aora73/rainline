@@ -124,9 +124,27 @@ function ScrollPlot({
   );
 }
 
-export function OutlookChart({ hours }: { hours: FutureHour[] }) {
+export function OutlookChart({
+  hours,
+  scores,
+}: {
+  hours: FutureHour[];
+  scores: Array<{ id: SourceId; score: number | null }>;
+}) {
   const [mode, setMode] = useState<Mode>("hourly");
   const [hidden, setHidden] = useState<SourceId[]>([]);
+
+  const best = useMemo(() => {
+    const order = new Map(SOURCES.map((source, index) => [source.id, index]));
+    return [...scores]
+      .sort((a, b) => {
+        const gap = (b.score ?? -1) - (a.score ?? -1);
+        if (gap !== 0) return gap;
+        return (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0);
+      })
+      .slice(0, 2)
+      .map((source) => source.id);
+  }, [scores]);
 
   const data = useMemo(() => {
     const running: Record<SourceId, number> = {
@@ -154,6 +172,10 @@ export function OutlookChart({ hours }: { hours: FutureHour[] }) {
 
   const unit = mode === "chance" ? "%" : "mm";
   const visible = SOURCES.filter((source) => !hidden.includes(source.id));
+  const showingBest =
+    best.length === 2 &&
+    visible.length === 2 &&
+    best.every((id) => visible.some((source) => source.id === id));
   const domain: [number, number] = [0, domainTop(data, visible.map((source) => source.id), mode === "chance")];
   const modes: Array<{ id: Mode; label: string }> = [
     { id: "hourly", label: "Hourly" },
@@ -208,7 +230,19 @@ export function OutlookChart({ hours }: { hours: FutureHour[] }) {
           />
         ))}
       </ScrollPlot>
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          aria-pressed={showingBest}
+          onClick={() =>
+            setHidden(showingBest ? [] : SOURCES.map((source) => source.id).filter((id) => !best.includes(id)))
+          }
+          className={
+            "min-h-11 rounded-full px-3 text-sm " + (showingBest ? "bg-fg text-bg" : "bg-bg text-fg")
+          }
+        >
+          Top two
+        </button>
         {SOURCES.map((source) => {
           const off = hidden.includes(source.id);
           return (
