@@ -55,7 +55,8 @@ function RainError({ error, reset }: ErrorComponentProps) {
   const message = error instanceof Error ? error.message : "The forecast feed did not respond.";
   return (
     <main className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-6">
-      <p className="text-sm text-muted">Rainline</p>
+      <img src="/aora-logo.png" alt="Australian Offroad Academy" className="h-12 w-auto bg-white" />
+      <p className="mt-4 text-sm text-muted">Rainline</p>
       <h1 className="mt-2 font-display text-4xl text-fg">The forecasts didn’t load</h1>
       <p className="mt-3 text-sm text-muted">{message}</p>
       <button type="button" onClick={reset} className="mt-6 min-h-11 w-fit rounded-full bg-fg px-4 text-sm text-bg">

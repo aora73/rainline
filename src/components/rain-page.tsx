@@ -148,7 +148,26 @@ export function RainPage({ report, place }: { report: RainReport; place: Place }
   >;
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-6 md:px-8 md:py-10">
+    <div className="min-h-screen">
+      <div className="bg-[#001830] text-[#f6f3ec]">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 md:px-8">
+          <a href="https://aora73.github.io/AORA-Apps/shelf/" className="flex min-w-0 items-center gap-3">
+            <img src="/aora-logo.png" alt="Australian Offroad Academy" className="h-10 w-auto shrink-0 bg-white" />
+            <span className="truncate text-sm font-semibold">Rainline</span>
+          </a>
+          <a
+            href="https://aoraradar.grok.me/"
+            className="inline-flex min-h-11 shrink-0 items-center text-sm font-semibold text-[#f2c14e]"
+          >
+            AORA Radar
+          </a>
+        </div>
+      </div>
+      <div aria-hidden="true">
+        <div className="h-1 bg-[#d04828]" />
+        <div className="h-1.5 bg-[#f6f3ec]" />
+      </div>
+      <main className="mx-auto w-full max-w-5xl px-4 py-6 md:px-8 md:py-10">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-sm font-medium tracking-wide text-muted">Rainline</p>
@@ -305,7 +324,19 @@ export function RainPage({ report, place }: { report: RainReport; place: Place }
           Forecasts: ECMWF IFS, NOAA GFS, DWD ICON, UK Met Office and ECCC GEM, via Open-Meteo previous model runs.
           Bureau ACCESS-G is not publishing on that open feed. Gauge traces © Bureau of Meteorology.
         </p>
+        <p>
+          An{" "}
+          <a className="font-medium text-fg underline" href="https://aora73.github.io/AORA-Apps/shelf/">
+            Australian Offroad Academy
+          </a>{" "}
+          app. Live weather radar is on{" "}
+          <a className="font-medium text-fg underline" href="https://aoraradar.grok.me/">
+            AORA Radar
+          </a>
+          .
+        </p>
       </footer>
     </main>
+    </div>
   );
 }

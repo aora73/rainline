@@ -3,7 +3,7 @@ import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import appCss from "../styles.css?url";
 
-const APP_NAME = "Rainline";
+const APP_NAME = "Rainline · Australian Offroad Academy";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -15,7 +15,7 @@ export const Route = createRootRoute({
         name: "description",
         content: "Compare rain chance and totals from five forecast sources, scored against the last 24 hours.",
       },
-      { name: "theme-color", content: "#f3eee4" },
+      { name: "theme-color", content: "#001830" },
     ],
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
