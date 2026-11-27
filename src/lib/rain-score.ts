@@ -188,6 +188,7 @@ export function gaugeHourly(obs: Array<{ stamp: string; trace: string }>): Map<s
 export function emptyBySource(): Record<SourceId, number | null> {
   return {
     ecmwf_ifs: null,
+    ecmwf_aifs025_single: null,
     gfs_seamless: null,
     icon_seamless: null,
     ukmo_seamless: null,

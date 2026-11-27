@@ -257,6 +257,7 @@ export const compareRain = createServerFn({ method: "GET" })
 
     const latestPast: Record<SourceId, Array<number | null>> = {
       ecmwf_ifs: [],
+      ecmwf_aifs025_single: [],
       gfs_seamless: [],
       icon_seamless: [],
       ukmo_seamless: [],
@@ -297,6 +298,7 @@ export const compareRain = createServerFn({ method: "GET" })
       time,
       called: {
         ecmwf_ifs: calledPast.ecmwf_ifs[hour],
+        ecmwf_aifs025_single: calledPast.ecmwf_aifs025_single[hour],
         gfs_seamless: calledPast.gfs_seamless[hour],
         icon_seamless: calledPast.icon_seamless[hour],
         ukmo_seamless: calledPast.ukmo_seamless[hour],
@@ -309,6 +311,7 @@ export const compareRain = createServerFn({ method: "GET" })
       time,
       rain: {
         ecmwf_ifs: futureRain.ecmwf_ifs[hour],
+        ecmwf_aifs025_single: futureRain.ecmwf_aifs025_single[hour],
         gfs_seamless: futureRain.gfs_seamless[hour],
         icon_seamless: futureRain.icon_seamless[hour],
         ukmo_seamless: futureRain.ukmo_seamless[hour],
@@ -316,6 +319,7 @@ export const compareRain = createServerFn({ method: "GET" })
       },
       chance: {
         ecmwf_ifs: futureChance.ecmwf_ifs[hour],
+        ecmwf_aifs025_single: futureChance.ecmwf_aifs025_single[hour],
         gfs_seamless: futureChance.gfs_seamless[hour],
         icon_seamless: futureChance.icon_seamless[hour],
         ukmo_seamless: futureChance.ukmo_seamless[hour],
@@ -362,10 +366,10 @@ export const compareRain = createServerFn({ method: "GET" })
       const distanceNote = ` It is ${gauge.info.distanceKm} km away.${elevNote}`;
       referenceNote = `Actual rain is reconstructed from the Bureau of Meteorology gauge at ${gauge.info.name}.${distanceNote} Scores use completed hours only, compared with what each source forecast about 24 hours earlier. Rain since 9am can be a little higher because it includes the hour still in progress.`;
     } else if (gauge) {
-      referenceNote = `${gauge.info.name} is the nearest public gauge, but its recent trace is too patchy to score against. Actual is the median of the five models' latest analyses for hours already passed — not a rain gauge.`;
+      referenceNote = `${gauge.info.name} is the nearest public gauge, but its recent trace is too patchy to score against. Actual is the median of the models' latest analyses for hours already passed — not a rain gauge.`;
     } else {
       referenceNote =
-        "No Bureau automatic gauge within 90 km published a fresh rain trace. Actual is the median of the five models' latest analyses for hours already passed — not a rain gauge. Scores show who was closest to that consensus.";
+        "No Bureau automatic gauge within 90 km published a fresh rain trace. Actual is the median of the models' latest analyses for hours already passed — not a rain gauge. Scores show who was closest to that consensus.";
     }
 
     return {

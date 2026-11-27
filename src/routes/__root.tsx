@@ -13,7 +13,7 @@ export const Route = createRootRoute({
       { title: APP_NAME },
       {
         name: "description",
-        content: "Compare rain chance and totals from five forecast sources, scored against the last 24 hours.",
+        content: "Compare rain chance and totals from six forecast sources, scored against the last 24 hours.",
       },
       { name: "theme-color", content: "#001830" },
     ],

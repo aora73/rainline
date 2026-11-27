@@ -6,6 +6,12 @@ export const SOURCES = [
     agency: "European Centre for Medium-Range Weather Forecasts",
   },
   {
+    id: "ecmwf_aifs025_single",
+    short: "AIFS",
+    name: "ECMWF AIFS",
+    agency: "European Centre for Medium-Range Weather Forecasts",
+  },
+  {
     id: "gfs_seamless",
     short: "GFS",
     name: "NOAA GFS",

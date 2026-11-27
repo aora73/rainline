@@ -5,6 +5,7 @@ import { SOURCES, type FutureHour, type PastHour, type SourceId } from "@/lib/ra
 
 const SERIES_COLOR: Record<SourceId, string> = {
   ecmwf_ifs: "var(--color-series-ecmwf)",
+  ecmwf_aifs025_single: "var(--color-series-aifs)",
   gfs_seamless: "var(--color-series-gfs)",
   icon_seamless: "var(--color-series-icon)",
   ukmo_seamless: "var(--color-series-ukmo)",
@@ -149,6 +150,7 @@ export function OutlookChart({
   const data = useMemo(() => {
     const running: Record<SourceId, number> = {
       ecmwf_ifs: 0,
+      ecmwf_aifs025_single: 0,
       gfs_seamless: 0,
       icon_seamless: 0,
       ukmo_seamless: 0,
@@ -190,7 +192,7 @@ export function OutlookChart({
           <h2 className="font-display text-2xl text-fg">Next 48 hours</h2>
           <p className="mt-1 text-sm text-muted">
             {mode === "chance"
-              ? "Chance of more than 0.1 mm in the hour."
+              ? "Chance of more than 0.1 mm in the hour. AIFS has no chance field."
               : mode === "total"
                 ? "Rainfall adding up from this hour forward."
                 : "Millimetres expected in each hour."}{" "}

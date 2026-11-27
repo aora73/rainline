@@ -326,7 +326,7 @@ export function RainPage({ report, place }: { report: RainReport; place: Place }
         {low == null || high == null
           ? "The next 48 hours are incomplete for at least one source."
           : low < 1 && high < 1
-            ? "All five sources keep the next 48 hours under 1 mm."
+            ? "All six sources keep the next 48 hours under 1 mm."
             : `Next 48 hours: ${low.toFixed(1)}–${high.toFixed(1)} mm, depending on the source.`}
       </p>
 
@@ -403,8 +403,8 @@ export function RainPage({ report, place }: { report: RainReport; place: Place }
           dry), and 20% whether wet hours were caught without false alarms. A wet hour is 0.2 mm or more.
         </p>
         <p>
-          Forecasts: ECMWF IFS, NOAA GFS, DWD ICON, UK Met Office and ECCC GEM, via Open-Meteo previous model runs.
-          Bureau ACCESS-G is not publishing on that open feed. Gauge traces © Bureau of Meteorology.
+          Forecasts: ECMWF IFS, ECMWF AIFS, NOAA GFS, DWD ICON, UK Met Office and ECCC GEM, via Open-Meteo previous model runs.
+          AIFS publishes rainfall totals only, so it is left off the chance chart. Gauge traces © Bureau of Meteorology.
         </p>
         <p>
           An{" "}
