@@ -1,0 +1,14 @@
+node_modules
+.vercel
+.tanstack
+.grok
+screenshots
+artifacts
+dist
+*.log
+.env
+.env.*
+.project_id
+.DS_Store
+AGENTS.md
+startup.sh

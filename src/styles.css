@@ -1,0 +1,89 @@
+@import "tailwindcss";
+@import "@fontsource/fraunces/latin-600.css";
+@import "@fontsource/outfit/latin-400.css";
+@import "@fontsource/outfit/latin-500.css";
+@import "@fontsource/outfit/latin-600.css";
+
+@theme {
+  --color-bg: #f3eee4;
+  --color-surface: #fffaf2;
+  --color-fg: #1c2418;
+  --color-muted: #5c6a57;
+  --color-faint: #7d8b76;
+  --color-line: #e3dccb;
+  --color-gold: #8d5e12;
+  --color-series-ecmwf: #8d5e12;
+  --color-series-gfs: #24362c;
+  --color-series-icon: #c45c26;
+  --color-series-ukmo: #3f6b4e;
+  --color-series-gem: #8c4a3a;
+  --color-series-actual: #1a6f8a;
+  --font-sans: "Outfit", system-ui, sans-serif;
+  --font-display: "Fraunces", Georgia, serif;
+  --radius-card: 1.25rem;
+}
+
+@layer base {
+  html {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@utility shadow-card {
+  box-shadow:
+    0 0 0 1px rgba(28, 36, 24, 0.07),
+    0 10px 28px rgba(28, 36, 24, 0.05);
+}
+
+.panel {
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  box-shadow:
+    0 0 0 1px rgba(28, 36, 24, 0.07),
+    0 10px 28px rgba(28, 36, 24, 0.05);
+}
+
+.field {
+  background: var(--color-surface);
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px rgba(28, 36, 24, 0.14);
+}
+
+.field:focus-within {
+  box-shadow: 0 0 0 2px var(--color-fg);
+}
+
+.hour-scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-faint) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}
