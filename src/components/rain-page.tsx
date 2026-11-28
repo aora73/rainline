@@ -170,7 +170,7 @@ export function RainPage({ report, place }: { report: RainReport; place: Place }
             <span className="truncate text-sm font-semibold">Rainline</span>
           </a>
           <a
-            href="https://aoraradar.grok.me/"
+            href="https://aora73.github.io/aora-radar/"
             className="inline-flex min-h-11 shrink-0 items-center text-sm font-semibold text-[#f2c14e]"
           >
             AORA Radar
@@ -412,7 +412,7 @@ export function RainPage({ report, place }: { report: RainReport; place: Place }
             Australian Offroad Academy
           </a>{" "}
           app. Live weather radar is on{" "}
-          <a className="font-medium text-fg underline" href="https://aoraradar.grok.me/">
+          <a className="font-medium text-fg underline" href="https://aora73.github.io/aora-radar/">
             AORA Radar
           </a>
           .
